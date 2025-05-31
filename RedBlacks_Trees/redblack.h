@@ -21,8 +21,8 @@ void *rotate_left(redblack*,TNo*);
 
 void *rotate_right(redblack*,TNo*);
 
-bool black_insert_fix_Up(redblack*,int*);
+bool black_insert_fix_Up(redblack*,TNo*);
 
 void rb_insert(redblack*,int);
 
-#endif redblack_H
+#endif
