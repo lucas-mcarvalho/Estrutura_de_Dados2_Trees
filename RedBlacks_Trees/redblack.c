@@ -3,18 +3,25 @@
 #include"redblack.h"
 #include<stdlib.h>
 
-//ALOCANDO A MEMORIA PRA CRIAR UM NO
-redblack *create(TNo *no, int key){
+
+
+TNo *createNfill(int info){
     TNo *novo = malloc(sizeof(TNo));
+    if(novo){
+        novo->color = black;
+        novo->key = info;
+    }
+    return novo;
+}
+
+//ALOCANDO A MEMORIA PRA CRIAR UM NO
+redblack *create(){
     redblack *tree = malloc(sizeof(redblack));
-    if(tree && novo){
-        novo->color = "red";
-        novo->key = key;
-        novo->p = tree->nill;
-        novo->left = tree->nill;
-        novo->right = tree->nill;
+    if(tree){
+        tree->nill = malloc(sizeof(TNo));
+        tree->nill->color = black;
+        tree->nill->left = tree->nill->right = tree->nill->p = NULL;
         tree->root = tree->nill;
-       
     }
     return tree;
 }
@@ -34,15 +41,15 @@ void *rotate_left(redblack *tree,TNo *no){
    
    //SE FOR A RAIZ DA ARVORE ,ENTAO SO ATUALIZAMOS PRA NOVA RAIZ 
     if(no->p == tree->nill){
-        no->p = tree;
+       tree->root = y;
     }
     //SE FOR O FILHO ESQUERDO  DO PAI ATUALIZAMOS A ESQUERDA  
     else if(no == no->p->left){
-            no->p = y;     
+        no->p->left = y;     
     }
     //SE FOR O FILHO DA DIREITA ATUALIZAMOS A DIREITA
     else{
-        no->right = y;
+       no->p->right = y;
     }
     //X VAI PRA ESQUERDA ,E ATUALIZAMOS O NO
     y->left = no;
@@ -55,20 +62,22 @@ void *rotate_left(redblack *tree,TNo *no){
 //MESMA ROTAÇÃO ,SO MUDA O SENTIDO ,AGORA É PRA DIREITA
 void *rotate_right(redblack *tree,TNo* no){
    TNo *y = no->left;
-   no->right = y->left;
+   no->left = y->right;
 
-   if(y->left != tree->nill){
-        y->left->p = no;
+   if(y->right != tree->nill){
+        y->right->p = no;
    }
    y->p = no->p;
    //SE FOR A RAIZ DA ARVORE 
    if(y->p == tree->nill){
-    no->p = tree;
+    tree->root = y;
    }
-  else{
-    no->right = y;
+  else if (no == no->p->right){
+    no->p->right = y;
+   }else{
+    no->p->left = y;
    }
-   y->left = no;
+   y->right = no;
    no->p = y;
 }
 
@@ -122,7 +131,12 @@ bool black_insert_fix_Up(redblack *tree,TNo *z){
 
 //INSERÇÃO É IGUAL A ÁRVORE BINÁRIA DE BUSCA .
 bool rb_insert(redblack *no,int key){
-    TNo *novo = create(novo,key)
+    TNo *novo = createNfill(key);
+    
+    novo->left = no->nill;
+    novo->right = no->nill;
+    novo->color = red;
+
     if(novo == NULL) return false;
     TNo *x = no->root ,*y = NULL;
     while(x!= no->nill){
@@ -133,14 +147,17 @@ bool rb_insert(redblack *no,int key){
              x = x->right;
         }
     }
-    novo->p = y->p;
+    novo->p =y;
+    if(y == no->nill){
+        no->root = novo;
+    }
     if(key < y->key){
         y->left = novo;
     }else{
         y->right = novo;
     }
 
-    black_insert_fix_Up(no,key);
+    black_insert_fix_Up(no,novo);
     return true;
     
 }

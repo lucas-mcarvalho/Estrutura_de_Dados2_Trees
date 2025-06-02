@@ -3,10 +3,17 @@
 
 #include<stdbool.h>
 
+
+typedef enum { 
+    red, black 
+} Color;
+
+
+
 typedef struct no {
     int key;
     struct no *left,*right,*p;
-    char color[10];
+    Color color;
 }TNo;
 
 typedef struct redblack{
@@ -15,7 +22,7 @@ typedef struct redblack{
 }redblack;
 
 
-redblack *create(TNo*,int);
+redblack *create();
 
 void *rotate_left(redblack*,TNo*);
 
@@ -23,6 +30,6 @@ void *rotate_right(redblack*,TNo*);
 
 bool black_insert_fix_Up(redblack*,TNo*);
 
-void rb_insert(redblack*,int);
+bool rb_insert(redblack*,int);
 
 #endif
