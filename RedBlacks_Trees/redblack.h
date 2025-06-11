@@ -24,12 +24,23 @@ typedef struct redblack{
 
 redblack *create();
 
-void *rotate_left(redblack*,TNo*);
+void rotate_left(redblack*,TNo*);
 
-void *rotate_right(redblack*,TNo*);
+void rotate_right(redblack*,TNo*);
 
 bool black_insert_fix_Up(redblack*,TNo*);
 
 bool rb_insert(redblack*,int);
+
+void transplant(redblack*,TNo*,TNo*);
+
+void rb_remove(redblack*,TNo*);
+
+void rb_remove_FixUP(redblack*,TNo*);
+
+void print_rbtree(TNo*,TNo*);
+
+TNo *rb_search(TNo*,TNo*,int);
+
 
 #endif
