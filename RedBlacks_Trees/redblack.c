@@ -164,16 +164,23 @@ bool rb_insert(redblack *no,int key){
 
 
 void transplant(redblack *t,TNo *u,TNo *v){
+    //SE FOR A RAIZ DA ARVORE ,SO TROCA
     if(u->p == t->nill){
         t->root = v;
+        //SENAO SE ,U FOR O FILHO ESQUERDO DO PAI
     }else if(u == u->p->left){
+        //TRANSPLANTA O FILHO ESQUERDO
             u->p->left = v; 
     }else{
+        //SENAO ,TRANSPLANTA O FILHO DIREITO
         u->p->right = v;
     }
+    //AO FINAL ATUALIZAMOS O PAI
     v->p = u->p;
+
 }
 
+//FUNCAO PRA BUSCAR O MENOR VALOR DA ARVORE ,OU SUCESSO NA FUNCAO RB_DELETE
 TNo *tree_Minimum(redblack *t,TNo *x){
     while(x->left!=t->nill){
         x = x->left; 
@@ -181,53 +188,83 @@ TNo *tree_Minimum(redblack *t,TNo *x){
     return x;
 }
 
+//CRIAMOS TRES VARIAVEIS ,Y ARMAZENA Z ,
+//X GUARDA O ENDERECO DO NOVO NOVO, E ORIGINAL COLOCAR A COR ORIGINAL
 void rb_remove(redblack *t,TNo *z){
     TNo *y = z;
     TNo *x;
     int y_original_color = y->color;
+    //SE O FILHO ESQUERDO FOR TNILL
     if(z->left == t->nill){
          x = z->right;
+         //TRANSPLANT COM O FILHO DA DIREITA
         transplant(t,z,z->right);
+        //SENAO TRANSPLANT COM O FILHO DA ESQUERD
     }else if(z->right == t->nill){
          x = z->left;
         transplant(t,z,z->left);
+        //CASO 2: TEM DOIS FILHOS
     }else{
+        //BUSCA O SUCESSOR NA DIREITA
         y = tree_Minimum(t,z->right);
+        //MUDO A COR ORIGINAL
         y_original_color = y->color;
-         x = y->right;
+        x = y->right;
+        //SE Y NAO FOR FILHO DIREITO DE Z
         if(y != z->right){
+            //TRANSPLANT Y ,NO Y->RIGHT 
             transplant(t,y,y->right);
+        //Y RECEBE O VALOR DE Z NA DIREITA  
             y->right = z->right;
+            //E O NOVO PAI DE Z SE TORNA O Y
             y->right->p = y;
         }else{
+            //SE ELE FOR O FILHO DIREITO DE Z
+            //X GUARDA O VALOR DE DO SUCESSOR
             x->p = y;
+            //TROCO O VALOR DA DIREITA PELO Y
             transplant(t,z,y);
+            //DEPOIS DE TROCAR AJUSTO UNS PONTEIROS
             y->left = z->left;
+            //Y DA ESQUERDA RECEBE O PAI
             y->left->p = y;
+            //ATUALIZAMOS A COR
             y->color = z->color;
         }
-
     }
+    //SE A COR ORIGINAL FOR BLACK ,CORRIJIMOS  COM FIX UP
     if(y_original_color == black){
         rb_remove_FixUP(t,x);
     }
 }
 
+
 void rb_remove_FixUP(redblack *t,TNo *x){
+    //ENQUANTO X FOR DIFERENTE DA RAIZ E A COR FOR BLACK
     while(x !=t->root && x->color != black){
         TNo *w;
+        //SE X FOR O FILHO ESQUERDO
         if(x == x->p->left){
+            //W RECEBE O FILHO DIREITO
             w = x->p->right;
+            //CASO 1 : SE W FOR VERMELHO
             if(w->color == red){
+                //PINTAMOS ELE DE PRETO E X DE VERMELHO
                 w->color = black;
                 x->color = red;
+                //FAZEMOS UMA ROTACAO PRA ESQUERDA
                 rotate_left(t,x->p);
                 w  = x->p->right;
-            }    
+            }   
+            //CASO 2 : W ESQUERDA E PRETO E W DIREITA TAMBEM SAI PRETOS
             if(w->left->color == black && w->right->color == black){
+                //APENAS PINTO O W DE VERMELHO E X TROCA PARA O PAI DELE
                 w->color = red;
                 x = x->p;
-            }else{
+
+            }
+            else{
+            //CASO 3 : SE APENAS W FOR BLACK E X FOR VERMELHO
                 if(w->right->color == black){
                     w->left->color = black;
                     w->color = red;
